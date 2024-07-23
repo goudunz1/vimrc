@@ -1,5 +1,5 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                        _                __ _     
+" ==============================================================================
+"                         _                __ _     
 "                        | |              /_ ( )    
 "    __ _  ___  _   _  __| |_   _ _ __  ___| |/ ___ 
 "   / _` |/ _ \| | | |/ _` | | | | '_ \|_  / | / __|
@@ -10,14 +10,17 @@
 "  \ \ / / | '_ ` _ \| '__/ __|                     
 "   \ V /| | | | | | | | | (__                      
 "    \_/ |_|_| |_| |_|_|  \___|                     
-"                                                   
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+" ==============================================================================
 
+" ==============================================================================
 " author Yu Sheng(goudunz1)
 " email  goudunz1@outlook.com
 " inspired by chenxuan's vimrc
 " https://github.com/chenxuan520/vim-fast
+" ==============================================================================
 
+" ==============================================================================
 " [vim options] {{{
 
 let mapleader=","               " use ',' as leader key
@@ -72,22 +75,37 @@ set autoread                    " auto load buffer if file changed
 set confirm                     " raise a dialog when saving
 
 " }}}
+" ==============================================================================
 
+" ==============================================================================
 " [user scripts] {{{
 
+" signature
+let g:author="Yu Sheng(goudunz1)"
+let g:email="goudunz1@outlook.com"
+
 " quick author & email
-iabbrev @@n Yu Sheng
+iabbrev @@n Yu Sheng(goudunz1)
 iabbrev @@e goudunz1@outlook.com
 
-" write file in sudo
+" force write
 cabbrev w!! w !sudo tee % >/dev/null
 
-" load .vimrc and plugin
-nnoremap <leader><leader>s :source <c-r>=expand('%:p')<cr><cr>
-nnoremap <leader><leader>i :PlugInstall<cr>
-nnoremap <leader><leader>c :PlugClean<cr>
+" quick write
+nnoremap <leader>w :w<cr>
+vnoremap <leader>w :w<cr>
 
-" yank to system clipboard
+" quick quit
+nnoremap <leader>q :q<cr>
+vnoremap <leader>q :q<cr>
+
+" torture myself :)
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+
+" yank from system clipboard
 vnoremap <leader>y "+y
 nnoremap <leader>y "+y
 
@@ -103,18 +121,12 @@ vnoremap <s-tab> <
 nnoremap <tab> >>
 nnoremap <s-tab> <<
 
-" better way to torture myself
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
-
 " erase trailing spaces
-nnoremap d<space> :s/\s*$//<cr>:noh<cr><c-o>
-nnoremap d<bs> :s/\s*$//<cr>:noh<cr><c-o>
+nnoremap <silent> d<space> :s/\s*$//<cr>:noh<cr><c-o>
+nnoremap <silent> d<bs> :%s/\s*$//<cr>:noh<cr><c-o>
 
 " erase empty lines
-nnoremap d<cr> :g/^\s*$/d<cr>:noh<cr>
+nnoremap <silent> d<cr> :g/^\s*$/d<cr>:noh<cr>
 
 " change window boundary
 nnoremap <c-up> <c-w>+
@@ -128,84 +140,96 @@ nnoremap <s-down> <c-w>j
 nnoremap <s-left> <c-w>h
 nnoremap <s-right> <c-w>l
 
-" mute pattern highlight
+" clear pattern highlight
 nnoremap <leader>h :noh<cr>
 
+" show hidden characters
+vnoremap <silent> <leader>l :let &l:list=!&l:list<cr>
+nnoremap <silent> <leader>l :let &l:list=!&l:list<cr>
+
 " open a new tab
-nnoremap <leader>t :tabnew<cr>
+nnoremap <leader><tab> :tabnew<cr>
+nnoremap <leader><bs> :tabclose<cr>
+
+" switch between buffers
+nnoremap <c-p> :bp<cr>
+nnoremap <c-n> :bn<cr>
+nnoremap <leader>d :bd<cr>
 
 " run marco in visual mode
-xnoremap @ :normal @
+xnoremap @ :normal! @
 
-" search selected text(register s will be used!)
-xnoremap g/ "sy/\V<c-r>=@s<cr>
-
-" auto pair parentheses and quotes in command line
-let g:pair_map={'(':')','[':']','{':'}','"':'"',"'":"'",'<':'>','`':'`',}
-
-function! s:MakePairCmd(ch)
-    let ch=getcmdline()[getcmdpos()-1]
-    if a:ch=='"'||a:ch=="'"||a:ch=='`'
-        if ch!=a:ch
-            return a:ch.a:ch."\<left>"
-        endif
-    endif
-    if ch==a:ch
-        return "\<right>"
-    endif
-    return a:ch
-endfunc
-
-function! s:DelPairCmd()
-    let s:pair=getcmdline()[getcmdpos()-1]
-    let s:pair_l=getcmdline()[getcmdpos()-2]
-    if has_key(g:pair_map, s:pair_l)&&(g:pair_map[s:pair_l]==s:pair)
-        return "\<right>\<bs>\<bs>"
-    else
-        return "\<bs>"
-    endif
-endfunc
-
-cnoremap ( ()<left>
-cnoremap [ []<left>
-cnoremap { {}<left>
-cnoremap <expr>" <sid>MakePairCmd('"')
-cnoremap <expr>` <sid>MakePairCmd('`')
-cnoremap <expr>' <sid>MakePairCmd("'")
-cnoremap <expr>> <sid>MakePairCmd('>')
-cnoremap <expr>) <sid>MakePairCmd(')')
-cnoremap <expr>} <sid>MakePairCmd('}')
-cnoremap <expr>] <sid>MakePairCmd(']')
-cnoremap <expr><bs> <sid>DelPairCmd()
+" substitute selected (register s will be used!)
+xnoremap g/ "sy/\V<c-r>=@s<cr><cr>
+xnoremap gs "sy/\V<c-r>=@s<cr><cr>:%s/\V<c-r>=@s<cr>/
 
 " add empty line
-nnoremap <leader>O :call append(line('.')-1,"")<cr>
-nnoremap <leader>o :call append(line('.'),"")<cr>
-
-" reload/redraw
-command! -nargs=0 -bang Reload exec ":edit ".expand("%")
-nnoremap <silent><leader>r :redraw!<cr>
-nnoremap <silent><leader>R :Reload!<cr>
+nnoremap <silent> <leader>O :call append(line('.')-1,"")<cr>
+nnoremap <silent> <leader>o :call append(line('.'),"")<cr>
 
 " selected move
-xnoremap <silent><up> :move '<-2<cr>gv
-xnoremap <silent><down> :move '>+1<cr>gv
-xnoremap <silent><right> y<c-w>lo<c-[>Vpgv
-xnoremap <silent><left> y<c-w>ho<c-[>Vpgv
-xnoremap <silent><c-k> :move '<-2<cr>gv
-xnoremap <silent><c-j> :move '>+1<cr>gv
-xnoremap <silent><c-l> y<c-w>lo<c-[>Vpgv
-xnoremap <silent><c-h> y<c-w>ho<c-[>Vpgv
+xnoremap <silent> <up> :move '<-2<cr>gv
+xnoremap <silent> <down> :move '>+1<cr>gv
+xnoremap <silent> <right> y<c-w>lo<c-[>Vpgv
+xnoremap <silent> <left> y<c-w>ho<c-[>Vpgv
+xnoremap <silent> <c-k> :move '<-2<cr>gv
+xnoremap <silent> <c-j> :move '>+1<cr>gv
+xnoremap <silent> <c-l> y<c-w>lo<c-[>Vpgv
+xnoremap <silent> <c-h> y<c-w>ho<c-[>Vpgv
+
+" vertical split on the right side
+nnoremap <leader>v :vsp<cr>:bn<cr>
+
+" edit file in new buffer
+nnoremap <leader>e :edit<space><c-r>=getcwd()<cr>/
+nnoremap <leader>E :edit<space>~/
 
 " remember the last position when re-opening a buffer
-autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+autocmd BufReadPost * if line("'\"")>1&&line("'\"")<=line("$")|exec "normal! g'\""|endif
 
-" set cursor line on current window
+" set cursor line 
 autocmd WinEnter,BufWinEnter * setlocal cursorline
 autocmd WinLeave,BufWinLeave * setlocal nocursorline
 
-" }}}
+" open up a terminal on the right side
+command! -complete=shellcmd -nargs=+ Shell exec "vertical terminal ".<q-args>
+nnoremap <silent> <leader>t :vertical terminal
+xnoremap <silent> <leader>t :vertical terminal
 
+" reload/redraw
+command! -nargs=0 -bang Reload exec ":edit ".expand("%")
+nnoremap <silent> <leader>r :redraw!<cr>
+nnoremap <silent> <leader>R :Reload!<cr>
+
+" autoload/scroll.vim
+noremap <silent> <c-u> :call scroll#up(&scroll, 16.67, 2)<cr>
+noremap <silent> <c-d> :call scroll#down(&scroll, 16.67, 2)<cr>
+noremap <silent> <c-b> :call scroll#up(&scroll*2, 16.67, 4)<cr>
+noremap <silent> <c-f> :call scroll#down(&scroll*2, 16.67, 4)<cr>
+
+" autoload/cmdline.vim
+cnoremap <expr> ( cmdline#auto_pair('(', 'pars')
+cnoremap <expr> ) cmdline#auto_pair(')', 'pars')
+cnoremap <expr> [ cmdline#auto_pair('[', 'pars')
+cnoremap <expr> ] cmdline#auto_pair(']', 'pars')
+cnoremap <expr> { cmdline#auto_pair('{', 'pars')
+cnoremap <expr> } cmdline#auto_pair('}', 'pars')
+cnoremap <expr> < cmdline#auto_pair('<', 'pars')
+cnoremap <expr> > cmdline#auto_pair('>', 'pars')
+cnoremap <expr> " cmdline#auto_pair('"', "quotes")
+cnoremap <expr> ' cmdline#auto_pair("'", "quotes")
+cnoremap <expr> ` cmdline#auto_pair("`", "quotes")
+cnoremap <expr> <bs> cmdline#auto_pair("\<bs>", 'bs')
+
+" tcsh-style command line(bash compatible)
+cnoremap <c-a> <home>
+cnoremap <c-b> <left>
+cnoremap <c-f> <right>
+
+" }}}
+" ==============================================================================
+
+" ==============================================================================
 " [plugin list] (managed by vim-plug) {{{
 
 call plug#begin('~/.vim/plugged')
@@ -213,19 +237,18 @@ call plug#begin('~/.vim/plugged')
 " navigation tree on the left
 Plug 'preservim/nerdtree'
 
-" auto code align
-Plug 'godlygeek/tabular'
-
 " auto pair parentheses or special keys
 Plug 'jiangmiao/auto-pairs'
 
-" make scrolling in vim more pleasant
-Plug 'terryma/vim-smooth-scroll'
+" auto code align
+Plug 'godlygeek/tabular'
 
 call plug#end()
 
 " }}}
+" ==============================================================================
 
+" ==============================================================================
 " [plugin settings] {{{
 
 " nerdtree
@@ -237,29 +260,27 @@ let g:NERDTreeHighlightFoldersFullName = 1
 let g:NERDTreeDirArrowExpandable='+'
 let g:NERDTreeDirArrowCollapsible='-'
 let g:NERDTreeWinSize=24
-nnoremap <silent><c-n> :NERDTreeToggle<cr>
+nnoremap <silent> <leader>n :NERDTreeToggle<cr>
 " exit vim if NERDTree is the only window remaining
 augroup augroup_nerdtree
     autocmd!
-    autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | :bn | endif
+    autocmd BufEnter * if winnr('$')==1&&exists('b:NERDTree')&&b:NERDTree.isTabTree()|:bn|endif
+augroup END
+
+" auto-pairs
+let g:AutoPairsMapCh=0
+let g:AutoPairsMapBS=0
+augroup augroup_autopairs
+    autocmd!
+    autocmd FileType php let b:AutoPairs=AutoPairsDefine({'<?':'?>','<?php':'?>'})
+    autocmd FileType rust let b:AutoPairs=AutoPairsDefine({'\w\zs<':'>'})
+    autocmd FileType html let b:AutoPairs=AutoPairsDefine({'<':'>','<!--':'-->'})
 augroup END
 
 " tabular
-nnoremap <leader>t :Tabularize /
-xnoremap <leader>t :Tabularize /
-
-" auto-pairs
-augroup augroup_autopairs
-    autocmd!
-    autocmd FileType php let b:AutoPairs = AutoPairsDefine({'<?' : '?>', '<?php': '?>'})
-    autocmd FileType rust let b:AutoPairs = AutoPairsDefine({'\w\zs<': '>'})
-augroup END
-
-" vim-smooth-scroll
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 20, 2)<cr>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 20, 2)<cr>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 20, 4)<cr>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 20, 4)<cr>
+nnoremap <leader><space> :Tabularize /
+xnoremap <leader><space> :Tabularize /
 
 " }}}
+" ==============================================================================
 
