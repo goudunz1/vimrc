@@ -14,12 +14,13 @@ xnoremap <silent><buffer> <leader>x "+y:call <sid>exec_as_python(getreg('+'))<cr
 
 function! s:init_code()
     call append(line(".")-1,'#!/usr/bin/env python')
-    call append(line(".")-1,'# Encoding=utf-8')
-    call append(line(".")-1,'# Author '.g:author)
-    call append(line(".")-1,'# Email '.g:email)
-    call append(line(".")-1,'# Update '.strftime("%Y-%m-%d %H:%M:%S"))
-    call append(line(".")-1,'# Description ')
-    call append(line(".")-1,'# Example ')
+    call append(line(".")-1,'# encoding=utf-8')
+    call append(line(".")-1,'# File: '.expand('%'))
+    call append(line(".")-1,'# Author: '.g:author)
+    call append(line(".")-1,'# Email: '.g:email)
+    call append(line(".")-1,'# Update: '.strftime("%Y-%m-%d %H:%M:%S"))
+    call append(line(".")-1,'# Description: ')
+    call append(line(".")-1,'# Example: ')
 endfunction
 
 nnoremap <silent><buffer> <leader>/ :call <sid>init_code()<cr>

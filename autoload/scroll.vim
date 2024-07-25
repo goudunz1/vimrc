@@ -29,12 +29,12 @@ function! s:do_scroll(dir, dist, duration, speed)
             if line(".") >= line("$")
                 break
             endif
-            exec "normal! ".a:speed."\<C-e>".a:speed."j"
+            exec "normal! ".a:speed."\<c-e>".a:speed."j"
         else
-            if line(".") <= line("0")
+            if line(".") <= 1
                 break
             endif
-            exec "normal! ".a:speed."\<C-y>".a:speed."k"
+            exec "normal! ".a:speed."\<c-y>".a:speed."k"
         endif
         redraw
         let elapsed = s:get_ms_since(start)
